@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { colors, semantic, spacing, typography } from '@babycam/design-tokens';
+import { colors, semantic, spacing, typography } from '@baby-monitor/design-tokens';
 import { commonStyles } from '../theme';
 
 interface RoleSelectionScreenProps {
@@ -16,7 +16,7 @@ export function RoleSelectionScreen({
     <View style={commonStyles.centeredContainer}>
       <View style={styles.header}>
         <Text style={styles.logo}>
-          Baby<Text style={styles.logoAccent}>Cam</Text>
+          Baby <Text style={styles.logoAccent}>Monitor</Text>
         </Text>
         <Text style={styles.tagline}>
           Transforme dois celulares em uma babá eletrônica

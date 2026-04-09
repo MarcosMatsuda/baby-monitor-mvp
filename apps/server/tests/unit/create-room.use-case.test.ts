@@ -1,5 +1,5 @@
 import { CreateRoomUseCase } from '../../src/domain/use-cases/create-room.use-case';
-import type { IRoomRepository } from '@babycam/shared-types';
+import type { IRoomRepository } from '@baby-monitor/shared-types';
 
 const mockRepository: jest.Mocked<IRoomRepository> = {
   create: jest.fn(),

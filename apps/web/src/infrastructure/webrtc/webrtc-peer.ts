@@ -1,5 +1,5 @@
-import { WEBRTC_CONFIG, DATA_CHANNEL_LABEL } from '@babycam/webrtc-config';
-import type { SignalDto } from '@babycam/shared-types';
+import { WEBRTC_CONFIG, DATA_CHANNEL_LABEL } from '@baby-monitor/webrtc-config';
+import type { SignalDto } from '@baby-monitor/shared-types';
 
 export class WebRtcPeer {
   private pc: RTCPeerConnection;

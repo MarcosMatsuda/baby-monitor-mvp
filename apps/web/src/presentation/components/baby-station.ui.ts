@@ -1,5 +1,5 @@
-import type { ConnectionState } from '@babycam/shared-types';
-import { semantic, getDbColor } from '@babycam/design-tokens';
+import type { ConnectionState } from '@baby-monitor/shared-types';
+import { semantic, getDbColor } from '@baby-monitor/design-tokens';
 
 export class BabyStationUi {
   private statusEl: HTMLElement;

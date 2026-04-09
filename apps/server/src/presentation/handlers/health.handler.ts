@@ -1,5 +1,5 @@
 import type { Router } from 'express';
-import type { IRoomRepository } from '@babycam/shared-types';
+import type { IRoomRepository } from '@baby-monitor/shared-types';
 
 export class HealthHandler {
   constructor(private readonly roomRepository: IRoomRepository) {}

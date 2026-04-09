@@ -4,8 +4,8 @@ import {
   RTCIceCandidate,
   MediaStream,
 } from 'react-native-webrtc';
-import { WEBRTC_CONFIG } from '@babycam/webrtc-config';
-import type { SignalDto, DataChannelMessage } from '@babycam/shared-types';
+import { WEBRTC_CONFIG } from '@baby-monitor/webrtc-config';
+import type { SignalDto, DataChannelMessage } from '@baby-monitor/shared-types';
 
 export class WebRtcPeerMobile {
   private pc: RTCPeerConnection;

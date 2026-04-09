@@ -1,5 +1,5 @@
 import type { IAudioCaptureRepository } from '../../domain/repositories/i-audio-capture.repository';
-import { AUDIO_CONSTRAINTS, ANALYSER_FFT_SIZE } from '@babycam/webrtc-config';
+import { AUDIO_CONSTRAINTS, ANALYSER_FFT_SIZE } from '@baby-monitor/webrtc-config';
 
 export class AudioCaptureRepository implements IAudioCaptureRepository {
   private audioContext: AudioContext | null = null;

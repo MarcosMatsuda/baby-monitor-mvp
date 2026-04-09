@@ -3,7 +3,7 @@ import {
   ALERT_DEBOUNCE_COUNT,
   ALERT_DISMISS_DELAY_MS,
   type AlertState,
-} from '@babycam/shared-types';
+} from '@baby-monitor/shared-types';
 
 export type AlertAction = 'trigger' | 'dismiss' | 'none';
 

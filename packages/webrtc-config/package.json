@@ -1,5 +1,5 @@
 {
-  "name": "@babycam/webrtc-config",
+  "name": "@baby-monitor/webrtc-config",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",

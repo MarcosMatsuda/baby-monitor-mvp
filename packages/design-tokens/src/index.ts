@@ -1,5 +1,5 @@
 // ============================================================
-// @babycam/design-tokens
+// @baby-monitor/design-tokens
 // Design system tokens — colors, spacing, typography, radii
 // Platform-agnostic values consumed by web CSS and RN styles
 // ============================================================

@@ -7,7 +7,7 @@ import type {
   PeerJoinedDto,
   PeerDisconnectedDto,
   RoomErrorDto,
-} from '@babycam/shared-types';
+} from '@baby-monitor/shared-types';
 
 type TypedSocket = Socket<IServerToClientEvents, IClientToServerEvents>;
 

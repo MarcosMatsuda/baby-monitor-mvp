@@ -47,8 +47,8 @@ function bootstrap(): void {
   healthHandler.register(app);
 
   // ---- Start ----
-  http.listen(config.port, () => {
-    console.log(`[server] listening on port ${config.port}`);
+  http.listen(config.port, '0.0.0.0', () => {
+    console.log(`[server] listening on 0.0.0.0:${config.port}`);
     console.log(`[server] health: http://localhost:${config.port}/health`);
   });
 }

@@ -1,4 +1,4 @@
-import type { IRoomRepository, RoomEntity, PeerRole } from '@babycam/shared-types';
+import type { IRoomRepository, RoomEntity, PeerRole } from '@baby-monitor/shared-types';
 import { Room } from '../../domain/entities/room.entity';
 
 export class InMemoryRoomRepository implements IRoomRepository {

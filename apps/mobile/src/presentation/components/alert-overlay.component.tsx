@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Pressable } from 'react-native';
-import { semantic } from '@babycam/design-tokens';
+import { semantic } from '@baby-monitor/design-tokens';
 
 interface AlertOverlayProps {
   readonly visible: boolean;

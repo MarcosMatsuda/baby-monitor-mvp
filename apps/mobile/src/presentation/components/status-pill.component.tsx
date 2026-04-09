@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import type { ConnectionState } from '@babycam/shared-types';
-import { semantic } from '@babycam/design-tokens';
+import type { ConnectionState } from '@baby-monitor/shared-types';
+import { semantic } from '@baby-monitor/design-tokens';
 import { commonStyles } from '../theme';
 
 interface StatusPillProps {

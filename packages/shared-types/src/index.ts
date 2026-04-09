@@ -1,5 +1,5 @@
 // ============================================================
-// @babycam/shared-types
+// @baby-monitor/shared-types
 // Domain layer — pure types, zero dependencies
 // These types define the contract between all apps.
 // ============================================================

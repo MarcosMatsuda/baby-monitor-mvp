@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, semantic, spacing, typography, radii, shadows } from '@babycam/design-tokens';
+import { colors, semantic, spacing, typography, radii, shadows } from '@baby-monitor/design-tokens';
 
 export const theme = {
   colors,

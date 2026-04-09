@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ConnectionState } from '@babycam/shared-types';
+import type { ConnectionState } from '@baby-monitor/shared-types';
 
 interface IConnectionStoreState {
   state: ConnectionState;

@@ -3,7 +3,7 @@ import {
   type PeerRole,
   ROOM_CODE_LENGTH,
   ROOM_CODE_CHARS,
-} from '@babycam/shared-types';
+} from '@baby-monitor/shared-types';
 
 export class Room implements RoomEntity {
   constructor(

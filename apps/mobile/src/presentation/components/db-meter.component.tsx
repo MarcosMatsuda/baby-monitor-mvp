@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
-import { getDbColor, spacing, typography, semantic } from '@babycam/design-tokens';
+import { getDbColor, spacing, typography, semantic } from '@baby-monitor/design-tokens';
 
 interface DbMeterProps {
   readonly db: number;

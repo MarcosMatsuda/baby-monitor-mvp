@@ -3,7 +3,7 @@ import type {
   IClientToServerEvents,
   IServerToClientEvents,
   PeerRole,
-} from '@babycam/shared-types';
+} from '@baby-monitor/shared-types';
 import { CreateRoomUseCase } from '../../domain/use-cases/create-room.use-case';
 import { JoinRoomUseCase } from '../../domain/use-cases/join-room.use-case';
 import { HandleDisconnectUseCase } from '../../domain/use-cases/handle-disconnect.use-case';

@@ -1,4 +1,4 @@
-import type { ISignalingRepository } from '@babycam/shared-types';
+import type { ISignalingRepository } from '@baby-monitor/shared-types';
 
 interface ICreateSessionOutput {
   readonly roomCode: string;

@@ -1,5 +1,5 @@
 // ============================================================
-// @babycam/webrtc-config
+// @baby-monitor/webrtc-config
 // Infrastructure constants — ICE servers, codec preferences
 // ============================================================
 
@@ -42,4 +42,4 @@ export const DATA_CHANNEL_LABEL = 'telemetry';
 export const ANALYSER_FFT_SIZE = 2048;
 
 export const SIGNALING_URL =
-  process.env.SIGNALING_URL ?? 'http://localhost:3001';
+  process.env.SIGNALING_URL ?? 'http://localhost:3003';

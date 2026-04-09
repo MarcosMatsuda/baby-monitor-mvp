@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DEFAULT_THRESHOLD_DB, type AlertState } from '@babycam/shared-types';
+import { DEFAULT_THRESHOLD_DB, type AlertState } from '@baby-monitor/shared-types';
 
 interface IMonitorStoreState {
   currentDb: number;

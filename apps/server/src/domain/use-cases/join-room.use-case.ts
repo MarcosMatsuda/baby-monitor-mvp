@@ -1,4 +1,4 @@
-import type { IRoomRepository, PeerJoinedDto } from '@babycam/shared-types';
+import type { IRoomRepository, PeerJoinedDto } from '@baby-monitor/shared-types';
 
 interface IJoinRoomInput {
   readonly roomCode: string;

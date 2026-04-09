@@ -1,4 +1,4 @@
-import type { IRoomRepository, RoomCreatedDto } from '@babycam/shared-types';
+import type { IRoomRepository, RoomCreatedDto } from '@baby-monitor/shared-types';
 import { Room } from '../entities/room.entity';
 
 interface ICreateRoomInput {

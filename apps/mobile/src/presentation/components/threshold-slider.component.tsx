@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { colors, semantic, spacing, typography } from '@babycam/design-tokens';
+import { colors, semantic, spacing, typography } from '@baby-monitor/design-tokens';
 
 interface ThresholdSliderProps {
   readonly value: number;

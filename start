@@ -1,0 +1,105 @@
+#!/bin/bash
+# ═══════════════════════════════════════════
+# Baby Monitor MVP - Start script
+# Server (3003) + Web (5175) + Mobile (8081)
+# Each service opens in its own iTerm2 tab
+# ═══════════════════════════════════════════
+
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+echo ""
+echo "Baby Monitor MVP — Starting..."
+echo ""
+
+# ─── Detect local IP ────────────────────
+LOCAL_IP=$(ipconfig getifaddr en0 2>/dev/null || hostname -I 2>/dev/null | awk '{print $1}')
+if [ -z "$LOCAL_IP" ]; then
+  LOCAL_IP="localhost"
+  echo "   ⚠ Could not detect local IP — using localhost"
+  echo "   Mobile app won't connect from another device"
+else
+  echo "   Local IP: $LOCAL_IP"
+fi
+
+# ─── Kill existing processes on used ports ──
+for port in 3003 5175 8081; do
+  pids=$(lsof -ti:$port 2>/dev/null)
+  if [ -n "$pids" ]; then
+    echo "$pids" | xargs kill -9 2>/dev/null
+    echo "   Killed process(es) on port $port"
+  fi
+done
+
+sleep 2
+
+for port in 3003 5175 8081; do
+  pids=$(lsof -ti:$port 2>/dev/null)
+  if [ -n "$pids" ]; then
+    echo "$pids" | xargs kill -9 2>/dev/null
+    sleep 1
+  fi
+done
+
+# ─── Check pnpm ──────────────────────────
+if ! which pnpm > /dev/null 2>&1; then
+  echo "   pnpm not found — run: npm install -g pnpm"
+  exit 1
+fi
+
+# ─── Check .env ──────────────────────────
+if [ ! -f "$PROJECT_DIR/.env" ]; then
+  echo "   .env missing — copying from .env.example"
+  cp "$PROJECT_DIR/.env.example" "$PROJECT_DIR/.env"
+fi
+
+# ─── Install dependencies ───────────────
+if [ ! -d "$PROJECT_DIR/node_modules" ]; then
+  echo ""
+  echo "   Installing dependencies..."
+  cd "$PROJECT_DIR" && pnpm install
+fi
+
+# ─── Export env vars ─────────────────────
+export SIGNALING_URL="http://${LOCAL_IP}:3003"
+export BABY_STATION_URL="http://${LOCAL_IP}:5175"
+
+echo ""
+echo "   ┌─────────────────────────────────────────┐"
+echo "   │  Server:  http://${LOCAL_IP}:3003        "
+echo "   │  Web:     http://${LOCAL_IP}:5175        "
+echo "   │  Mobile:  Metro on port 8081             "
+echo "   └─────────────────────────────────────────┘"
+echo ""
+echo "   How to test:"
+echo "   1. Open mobile app on your phone (parent)"
+echo "   2. Tap 'Sou o pai/mãe' → get room code"
+echo "   3. On another device, open: http://${LOCAL_IP}:5175"
+echo "   4. Enter the room code → baby station starts"
+echo ""
+
+# ─── Open each service in a new iTerm2 tab ──
+ENV_EXPORTS="export SIGNALING_URL='http://${LOCAL_IP}:3003' && export BABY_STATION_URL='http://${LOCAL_IP}:5175'"
+
+osascript <<EOF
+tell application "iTerm2"
+  tell current window
+    -- Tab: Server
+    create tab with default profile
+    tell current session
+      write text "cd '${PROJECT_DIR}' && ${ENV_EXPORTS} && echo '── Server (port 3003) ──' && pnpm dev:server"
+    end tell
+
+    -- Tab: Web
+    create tab with default profile
+    tell current session
+      write text "cd '${PROJECT_DIR}' && ${ENV_EXPORTS} && echo '── Web (port 5175) ──' && pnpm dev:web"
+    end tell
+
+    -- Tab: Mobile
+    create tab with default profile
+    tell current session
+      write text "cd '${PROJECT_DIR}/apps/mobile' && ${ENV_EXPORTS} && echo '── Mobile (port 8081) ──' && npx expo start --dev-client"
+    end tell
+  end tell
+end tell
+EOF

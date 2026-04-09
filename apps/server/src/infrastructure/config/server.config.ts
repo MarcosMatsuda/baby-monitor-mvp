@@ -5,7 +5,7 @@ export interface IServerConfig {
 
 export function loadConfig(): IServerConfig {
   return {
-    port: Number(process.env.PORT) || 3001,
+    port: Number(process.env.PORT) || 3003,
     corsOrigin: process.env.CORS_ORIGIN ?? '*',
   };
 }

@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, Vibration } from 'react-native';
-import { semantic } from '@babycam/design-tokens';
-import { SIGNALING_URL } from '@babycam/webrtc-config';
-import type { ConnectionState, DataChannelMessage } from '@babycam/shared-types';
+import { semantic } from '@baby-monitor/design-tokens';
+import type { ConnectionState, DataChannelMessage } from '@baby-monitor/shared-types';
+import { ENV } from './src/infrastructure/config/env';
 
 import { RoleSelectionScreen } from './src/presentation/screens/role-selection.screen';
 import { PairingScreen } from './src/presentation/screens/pairing.screen';
@@ -20,7 +20,7 @@ import { ProcessDbReadingUseCase } from './src/domain/use-cases/process-db-readi
 type Screen = 'role-selection' | 'pairing' | 'monitor';
 
 const VIBRATION_PATTERN = [200, 100, 200, 100, 400];
-const BASE_URL = 'https://babycam.app'; // replace with actual deployed URL
+const BASE_URL = ENV.BABY_STATION_URL;
 
 // ---- Singletons (created once, survive screen transitions) ----
 const signalingRepo = new SignalingRepository();
@@ -38,7 +38,7 @@ export default function App(): React.JSX.Element {
   const handleSelectParent = useCallback(async () => {
     try {
       connection.setState('waiting');
-      await signalingRepo.connect(SIGNALING_URL);
+      await signalingRepo.connect(ENV.SIGNALING_URL);
       const roomCode = await signalingRepo.createRoom();
       connection.setRoomCode(roomCode);
       setScreen('pairing');
@@ -108,6 +108,13 @@ export default function App(): React.JSX.Element {
       signalingRepo.onPeerDisconnected(() => {
         connection.setState('disconnected');
         Vibration.cancel();
+        webrtcPeer?.close();
+        webrtcPeer = null;
+        signalingRepo.disconnect();
+        connection.reset();
+        monitor.reset();
+        alertEngine.reset();
+        setScreen('role-selection');
       });
 
     } catch {

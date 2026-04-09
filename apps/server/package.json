@@ -1,5 +1,5 @@
 {
-  "name": "@babycam/server",
+  "name": "@baby-monitor/server",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,7 +13,7 @@
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
-    "@babycam/shared-types": "workspace:*",
+    "@baby-monitor/shared-types": "workspace:*",
     "express": "^4.21.0",
     "socket.io": "^4.8.0"
   },

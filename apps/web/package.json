@@ -1,5 +1,5 @@
 {
-  "name": "@babycam/web",
+  "name": "@baby-monitor/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,9 +12,9 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@babycam/shared-types": "workspace:*",
-    "@babycam/webrtc-config": "workspace:*",
-    "@babycam/design-tokens": "workspace:*",
+    "@baby-monitor/shared-types": "workspace:*",
+    "@baby-monitor/webrtc-config": "workspace:*",
+    "@baby-monitor/design-tokens": "workspace:*",
     "socket.io-client": "^4.8.0"
   },
   "devDependencies": {

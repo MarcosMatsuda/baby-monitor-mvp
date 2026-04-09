@@ -1,4 +1,4 @@
-import type { IRoomRepository, PeerRole } from '@babycam/shared-types';
+import type { IRoomRepository, PeerRole } from '@baby-monitor/shared-types';
 
 interface IHandleDisconnectInput {
   readonly roomCode: string;

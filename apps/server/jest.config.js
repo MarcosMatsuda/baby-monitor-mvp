@@ -8,7 +8,7 @@ module.exports = {
     '^@data/(.*)$': '<rootDir>/src/data/$1',
     '^@infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
     '^@presentation/(.*)$': '<rootDir>/src/presentation/$1',
-    '^@babycam/shared-types$': '<rootDir>/../../packages/shared-types/src/index',
+    '^@baby-monitor/shared-types$': '<rootDir>/../../packages/shared-types/src/index',
   },
   clearMocks: true,
   collectCoverageFrom: ['src/**/*.ts', '!src/main.ts'],

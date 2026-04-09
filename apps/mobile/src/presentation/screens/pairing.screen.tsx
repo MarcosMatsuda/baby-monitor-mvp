@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Share, Platform } from 'react-native';
-import { colors, semantic, spacing, typography, radii } from '@babycam/design-tokens';
-import type { ConnectionState } from '@babycam/shared-types';
+import { colors, semantic, spacing, typography, radii } from '@baby-monitor/design-tokens';
+import type { ConnectionState } from '@baby-monitor/shared-types';
 import { StatusPill } from '../components';
 import { commonStyles } from '../theme';
 

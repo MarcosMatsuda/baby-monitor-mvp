@@ -1,4 +1,4 @@
-import type { ConnectionState } from '@babycam/shared-types';
+import type { ConnectionState } from '@baby-monitor/shared-types';
 
 export interface IConnectionEntity {
   readonly state: ConnectionState;

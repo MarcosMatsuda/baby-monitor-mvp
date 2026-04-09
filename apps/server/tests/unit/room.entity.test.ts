@@ -1,5 +1,5 @@
 import { Room } from '../../src/domain/entities/room.entity';
-import { ROOM_CODE_LENGTH, ROOM_CODE_CHARS } from '@babycam/shared-types';
+import { ROOM_CODE_LENGTH, ROOM_CODE_CHARS } from '@baby-monitor/shared-types';
 
 describe('Room entity', () => {
   it('should create with parent peer id', () => {

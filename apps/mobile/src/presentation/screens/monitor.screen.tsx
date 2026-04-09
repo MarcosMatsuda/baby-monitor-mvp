@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
-import { semantic, spacing, typography, radii } from '@babycam/design-tokens';
-import type { ConnectionState } from '@babycam/shared-types';
+import { semantic, spacing, typography, radii } from '@baby-monitor/design-tokens';
+import type { ConnectionState } from '@baby-monitor/shared-types';
 import { StatusPill, DbMeter, ThresholdSlider, AlertOverlay } from '../components';
 import { useElapsedTime } from '../hooks/use-elapsed-time.hook';
 import { useLastActivity } from '../hooks/use-last-activity.hook';

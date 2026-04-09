@@ -9,9 +9,9 @@ import { WebRtcPeer } from './infrastructure/webrtc/webrtc-peer';
 import { BabyStationUi } from './presentation/components/baby-station.ui';
 import { AudioLevel } from './domain/entities/audio-level.entity';
 import { Connection } from './domain/entities/connection.entity';
-import { SIGNALING_URL } from '@babycam/webrtc-config';
-import { DB_SEND_INTERVAL_MS } from '@babycam/shared-types';
-import type { ConnectionState } from '@babycam/shared-types';
+import { SIGNALING_URL } from '@baby-monitor/webrtc-config';
+import { DB_SEND_INTERVAL_MS } from '@baby-monitor/shared-types';
+import type { ConnectionState } from '@baby-monitor/shared-types';
 import './presentation/styles/main.css';
 
 class BabyStationApp {
@@ -62,6 +62,16 @@ class BabyStationApp {
     const input = document.getElementById('code-input') as HTMLInputElement;
     const btn = document.getElementById('code-btn') as HTMLButtonElement;
     const entry = document.getElementById('code-entry') as HTMLElement;
+
+    // Hide elements not relevant for code entry screen
+    const status = document.getElementById('status');
+    const dbContainer = document.querySelector('.db-container') as HTMLElement;
+    const timer = document.getElementById('timer');
+    const disconnectBtn = document.getElementById('disconnect-btn');
+    if (status) status.style.display = 'none';
+    if (dbContainer) dbContainer.style.display = 'none';
+    if (timer) timer.style.display = 'none';
+    if (disconnectBtn) disconnectBtn.style.display = 'none';
 
     if (entry) entry.style.display = 'flex';
 
@@ -156,6 +166,8 @@ class BabyStationApp {
       this.webrtc.close();
       this.signaling.disconnect();
       this.updateState('disconnected');
+      // Redirect to code entry screen
+      window.location.href = '/';
     });
   }
 
