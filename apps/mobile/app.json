@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "BabyCam",
+    "slug": "babycam",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0c0b0f"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.babycam.app",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"],
+        "NSMicrophoneUsageDescription": "BabyCam needs microphone access for the talk-back feature."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0c0b0f"
+      },
+      "package": "com.babycam.app",
+      "permissions": [
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS",
+        "FOREGROUND_SERVICE",
+        "WAKE_LOCK",
+        "VIBRATE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ]
+    },
+    "plugins": [
+      "react-native-webrtc"
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>BabyCam — Baby Station</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>👶</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <div class="logo">Baby<span>Cam</span></div>
+    <div id="status">Inicializando...</div>
+
+    <div class="db-container">
+      <div id="db-value">-- dB</div>
+      <div class="db-track">
+        <div id="db-meter"></div>
+      </div>
+    </div>
+
+    <div id="timer">00:00:00</div>
+
+    <div id="code-entry" class="code-entry" style="display:none">
+      <input id="code-input" type="text" maxlength="6" placeholder="CÓDIGO" autocomplete="off">
+      <button id="code-btn">Conectar</button>
+    </div>
+
+    <button id="disconnect-btn">Desconectar</button>
+    <div id="error"></div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

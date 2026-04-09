@@ -1,0 +1,24 @@
+{
+  "name": "babycam",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smart baby monitor — React Native + Web + Node.js",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:server": "turbo run dev --filter=@babycam/server",
+    "dev:web": "turbo run dev --filter=@babycam/web",
+    "dev:mobile": "turbo run dev --filter=@babycam/mobile",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "clean": "turbo run clean && rm -rf node_modules"
+  }
+}
