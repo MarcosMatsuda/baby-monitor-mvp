@@ -24,3 +24,6 @@ ios/
 *.swp
 *.swo
 .DS_Store
+
+# Local-only architecture doc (never committed)
+CLAUDE.md
