@@ -1,9 +1,9 @@
 # Baby Monitor
 
-Smart baby monitor — turn two smartphones into a baby monitoring system.
+Smart baby monitor, turn two smartphones into a baby monitoring system.
 
 **Parent station**: React Native app (installed on the parent's phone)
-**Baby station**: Web app (opens in the browser of any old phone — zero install)
+**Baby station**: Web app (opens in the browser of any old phone, zero install)
 
 Audio streams peer-to-peer via WebRTC. The server only handles the initial handshake.
 
