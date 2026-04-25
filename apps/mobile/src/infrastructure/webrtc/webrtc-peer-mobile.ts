@@ -10,6 +10,7 @@ import type { SignalDto, DataChannelMessage } from '@baby-monitor/shared-types';
 export class WebRtcPeerMobile {
   private pc: RTCPeerConnection;
   private dataChannel: any = null;
+  private localAudioTrack: any = null;
 
   public onIceCandidate: ((candidate: RTCIceCandidateInit) => void) | null = null;
   public onTrack: ((stream: MediaStream) => void) | null = null;
@@ -52,6 +53,22 @@ export class WebRtcPeerMobile {
   sendData(message: DataChannelMessage): void {
     if (this.dataChannel?.readyState === 'open') {
       this.dataChannel.send(JSON.stringify(message));
+    }
+  }
+
+  addLocalAudioTrack(stream: MediaStream): void {
+    const track = (stream as any).getAudioTracks?.()[0];
+    if (!track) return;
+
+    // Start muted — parent must press-to-talk to activate.
+    track.enabled = false;
+    this.localAudioTrack = track;
+    (this.pc as any).addTrack(track, stream);
+  }
+
+  setMicEnabled(enabled: boolean): void {
+    if (this.localAudioTrack) {
+      this.localAudioTrack.enabled = enabled;
     }
   }
 

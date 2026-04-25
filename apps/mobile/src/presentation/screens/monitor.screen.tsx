@@ -17,9 +17,13 @@ interface MonitorScreenProps {
   readonly lastNoiseAt: number | null;
   readonly remoteStream: MediaStream | null;
   readonly videoEnabled: boolean;
+  readonly canTalk: boolean;
+  readonly isTalking: boolean;
   readonly onThresholdChange: (value: number) => void;
   readonly onDismissAlert: () => void;
   readonly onToggleVideo: () => void;
+  readonly onTalkStart: () => void;
+  readonly onTalkStop: () => void;
   readonly onDisconnect: () => void;
 }
 
@@ -32,9 +36,13 @@ export function MonitorScreen({
   lastNoiseAt,
   remoteStream,
   videoEnabled,
+  canTalk,
+  isTalking,
   onThresholdChange,
   onDismissAlert,
   onToggleVideo,
+  onTalkStart,
+  onTalkStop,
   onDisconnect,
 }: MonitorScreenProps): React.JSX.Element {
   const elapsed = useElapsedTime(connectedAt);
@@ -93,6 +101,26 @@ export function MonitorScreen({
       </View>
 
       <View style={styles.bottomBar}>
+        {canTalk && (
+          <Pressable
+            onPressIn={onTalkStart}
+            onPressOut={onTalkStop}
+            style={({ pressed }) => [
+              styles.talkButton,
+              (isTalking || pressed) && styles.talkButtonActive,
+            ]}
+          >
+            <Text
+              style={[
+                styles.talkButtonText,
+                isTalking && styles.talkButtonTextActive,
+              ]}
+            >
+              {isTalking ? 'Transmitindo…' : 'Segurar para falar'}
+            </Text>
+          </Pressable>
+        )}
+
         <Pressable
           style={({ pressed }) => [
             styles.videoButton,
@@ -170,6 +198,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: spacing[10],
     gap: spacing[3],
+  },
+  talkButton: {
+    paddingVertical: spacing[4],
+    paddingHorizontal: spacing[10],
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: semantic.status.connected,
+    minWidth: 220,
+    alignItems: 'center',
+  },
+  talkButtonActive: {
+    backgroundColor: semantic.status.connected,
+  },
+  talkButtonText: {
+    fontSize: typography.size.base,
+    fontWeight: typography.weight.semibold,
+    color: semantic.status.connected,
+  },
+  talkButtonTextActive: {
+    color: semantic.bg.primary,
   },
   videoButton: {
     paddingVertical: spacing[3],

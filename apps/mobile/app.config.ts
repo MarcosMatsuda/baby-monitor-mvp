@@ -18,7 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     infoPlist: {
       UIBackgroundModes: ['audio'],
       NSMicrophoneUsageDescription:
-        'Baby Monitor needs microphone access to detect baby sounds.',
+        'Baby Monitor uses the microphone so you can talk to your baby through push-to-talk.',
     },
   },
   android: {

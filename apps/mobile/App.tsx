@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, Vibration } from 'react-native';
-import type { MediaStream } from 'react-native-webrtc';
+import { mediaDevices, type MediaStream } from 'react-native-webrtc';
 import { semantic } from '@baby-monitor/design-tokens';
 import type { ConnectionState, DataChannelMessage } from '@baby-monitor/shared-types';
 import { ENV } from './src/infrastructure/config/env';
@@ -28,11 +28,31 @@ const signalingRepo = new SignalingRepository();
 const alertEngine = new AlertEngine();
 const processDbReading = new ProcessDbReadingUseCase(alertEngine);
 let webrtcPeer: WebRtcPeerMobile | null = null;
+let localAudioStream: MediaStream | null = null;
+
+async function requestMicrophone(): Promise<MediaStream | null> {
+  try {
+    const stream = await mediaDevices.getUserMedia({ audio: true });
+    return stream as unknown as MediaStream;
+  } catch {
+    // Mic denied — talk-back is disabled, monitoring still works.
+    return null;
+  }
+}
+
+function stopLocalAudio(): void {
+  if (localAudioStream) {
+    (localAudioStream as any).getTracks?.().forEach((t: any) => t.stop?.());
+    localAudioStream = null;
+  }
+}
 
 export default function App(): React.JSX.Element {
   const [screen, setScreen] = useState<Screen>('role-selection');
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [videoEnabled, setVideoEnabled] = useState(false);
+  const [canTalk, setCanTalk] = useState(false);
+  const [isTalking, setIsTalking] = useState(false);
   const connection = useConnection();
   const monitor = useMonitor();
 
@@ -41,9 +61,14 @@ export default function App(): React.JSX.Element {
   const handleSelectParent = useCallback(async () => {
     try {
       connection.setState('waiting');
+      // Request mic permission in parallel with signaling setup so it's ready
+      // before the baby station sends its offer.
+      const micPromise = requestMicrophone();
       await signalingRepo.connect(ENV.SIGNALING_URL);
       const roomCode = await signalingRepo.createRoom();
       connection.setRoomCode(roomCode);
+      localAudioStream = await micPromise;
+      setCanTalk(localAudioStream !== null);
       setScreen('pairing');
 
       // Wire signaling for WebRTC handshake
@@ -63,6 +88,10 @@ export default function App(): React.JSX.Element {
       signalingRepo.onPeerJoined(() => {
         // Baby station connected — create WebRTC peer
         webrtcPeer = new WebRtcPeerMobile();
+
+        if (localAudioStream) {
+          webrtcPeer.addLocalAudioTrack(localAudioStream);
+        }
 
         webrtcPeer.onConnectionStateChange = (state: string) => {
           const map: Record<string, ConnectionState> = {
@@ -123,11 +152,16 @@ export default function App(): React.JSX.Element {
         alertEngine.reset();
         setRemoteStream(null);
         setVideoEnabled(false);
+        setIsTalking(false);
+        setCanTalk(false);
+        stopLocalAudio();
         setScreen('role-selection');
       });
 
     } catch {
       connection.setState('disconnected');
+      stopLocalAudio();
+      setCanTalk(false);
     }
   }, [connection, monitor]);
 
@@ -142,6 +176,9 @@ export default function App(): React.JSX.Element {
     alertEngine.reset();
     setRemoteStream(null);
     setVideoEnabled(false);
+    setIsTalking(false);
+    setCanTalk(false);
+    stopLocalAudio();
     setScreen('role-selection');
   }, [connection, monitor]);
 
@@ -163,6 +200,20 @@ export default function App(): React.JSX.Element {
     });
   }, []);
 
+  const handleTalkStart = useCallback(() => {
+    if (!webrtcPeer || !localAudioStream) return;
+    webrtcPeer.setMicEnabled(true);
+    webrtcPeer.sendData({ type: 'talk-state', talking: true, ts: Date.now() });
+    setIsTalking(true);
+  }, []);
+
+  const handleTalkStop = useCallback(() => {
+    if (!webrtcPeer) return;
+    webrtcPeer.setMicEnabled(false);
+    webrtcPeer.sendData({ type: 'talk-state', talking: false, ts: Date.now() });
+    setIsTalking(false);
+  }, []);
+
   const handleDisconnect = useCallback(() => {
     webrtcPeer?.close();
     webrtcPeer = null;
@@ -172,6 +223,9 @@ export default function App(): React.JSX.Element {
     alertEngine.reset();
     setRemoteStream(null);
     setVideoEnabled(false);
+    setIsTalking(false);
+    setCanTalk(false);
+    stopLocalAudio();
     setScreen('role-selection');
   }, [connection, monitor]);
 
@@ -207,9 +261,13 @@ export default function App(): React.JSX.Element {
           lastNoiseAt={monitor.lastNoiseAt}
           remoteStream={remoteStream}
           videoEnabled={videoEnabled}
+          canTalk={canTalk}
+          isTalking={isTalking}
           onThresholdChange={monitor.setThreshold}
           onDismissAlert={handleDismissAlert}
           onToggleVideo={handleToggleVideo}
+          onTalkStart={handleTalkStart}
+          onTalkStop={handleTalkStop}
           onDisconnect={handleDisconnect}
         />
       )}
