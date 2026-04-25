@@ -9,6 +9,7 @@ import type { SignalDto, DataChannelMessage } from '@baby-monitor/shared-types';
 
 export class WebRtcPeerMobile {
   private pc: RTCPeerConnection;
+  private dataChannel: any = null;
 
   public onIceCandidate: ((candidate: RTCIceCandidateInit) => void) | null = null;
   public onTrack: ((stream: MediaStream) => void) | null = null;
@@ -32,6 +33,7 @@ export class WebRtcPeerMobile {
 
     (this.pc as any).ondatachannel = (event: any) => {
       const channel = event.channel;
+      this.dataChannel = channel;
       channel.onmessage = (msg: any) => {
         try {
           const data: DataChannelMessage = JSON.parse(msg.data);
@@ -45,6 +47,12 @@ export class WebRtcPeerMobile {
     (this.pc as any).onconnectionstatechange = () => {
       this.onConnectionStateChange?.((this.pc as any).connectionState);
     };
+  }
+
+  sendData(message: DataChannelMessage): void {
+    if (this.dataChannel?.readyState === 'open') {
+      this.dataChannel.send(JSON.stringify(message));
+    }
   }
 
   async handleOffer(sdp: string): Promise<SignalDto> {
