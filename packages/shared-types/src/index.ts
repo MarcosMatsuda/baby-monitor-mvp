@@ -68,7 +68,8 @@ export type DataChannelMessage =
   | DbLevelMessage
   | StatusMessage
   | PingMessage
-  | VideoToggleMessage;
+  | VideoToggleMessage
+  | TalkStateMessage;
 
 export interface DbLevelMessage {
   readonly type: 'db';
@@ -92,6 +93,14 @@ export interface PingMessage {
 export interface VideoToggleMessage {
   readonly type: 'video-toggle';
   readonly enabled: boolean;
+  readonly ts: number;
+}
+
+// Parent → baby: parent is holding push-to-talk. Baby must mute its own
+// outgoing mic while `talking` is true to avoid acoustic feedback loops.
+export interface TalkStateMessage {
+  readonly type: 'talk-state';
+  readonly talking: boolean;
   readonly ts: number;
 }
 
