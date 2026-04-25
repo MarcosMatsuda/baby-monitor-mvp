@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, Vibration } from 'react-native';
+import type { MediaStream } from 'react-native-webrtc';
 import { semantic } from '@baby-monitor/design-tokens';
 import type { ConnectionState, DataChannelMessage } from '@baby-monitor/shared-types';
 import { ENV } from './src/infrastructure/config/env';
@@ -30,6 +31,8 @@ let webrtcPeer: WebRtcPeerMobile | null = null;
 
 export default function App(): React.JSX.Element {
   const [screen, setScreen] = useState<Screen>('role-selection');
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [videoEnabled, setVideoEnabled] = useState(false);
   const connection = useConnection();
   const monitor = useMonitor();
 
@@ -102,6 +105,10 @@ export default function App(): React.JSX.Element {
           signalingRepo.sendSignal({ type: 'ice-candidate', candidate });
         };
 
+        webrtcPeer.onTrack = (stream) => {
+          setRemoteStream(stream);
+        };
+
         connection.setState('connecting');
       });
 
@@ -114,6 +121,8 @@ export default function App(): React.JSX.Element {
         connection.reset();
         monitor.reset();
         alertEngine.reset();
+        setRemoteStream(null);
+        setVideoEnabled(false);
         setScreen('role-selection');
       });
 
@@ -131,6 +140,8 @@ export default function App(): React.JSX.Element {
     connection.reset();
     monitor.reset();
     alertEngine.reset();
+    setRemoteStream(null);
+    setVideoEnabled(false);
     setScreen('role-selection');
   }, [connection, monitor]);
 
@@ -140,6 +151,18 @@ export default function App(): React.JSX.Element {
     Vibration.cancel();
   }, [monitor]);
 
+  const handleToggleVideo = useCallback(() => {
+    setVideoEnabled((prev) => {
+      const next = !prev;
+      webrtcPeer?.sendData({
+        type: 'video-toggle',
+        enabled: next,
+        ts: Date.now(),
+      });
+      return next;
+    });
+  }, []);
+
   const handleDisconnect = useCallback(() => {
     webrtcPeer?.close();
     webrtcPeer = null;
@@ -147,6 +170,8 @@ export default function App(): React.JSX.Element {
     connection.reset();
     monitor.reset();
     alertEngine.reset();
+    setRemoteStream(null);
+    setVideoEnabled(false);
     setScreen('role-selection');
   }, [connection, monitor]);
 
@@ -180,8 +205,11 @@ export default function App(): React.JSX.Element {
           threshold={monitor.threshold}
           alertActive={monitor.alertState === 'triggered'}
           lastNoiseAt={monitor.lastNoiseAt}
+          remoteStream={remoteStream}
+          videoEnabled={videoEnabled}
           onThresholdChange={monitor.setThreshold}
           onDismissAlert={handleDismissAlert}
+          onToggleVideo={handleToggleVideo}
           onDisconnect={handleDisconnect}
         />
       )}
