@@ -8,12 +8,14 @@ import type { DataChannelMessage, SignalDto } from '@baby-monitor/shared-types';
 export class WebRtcPeer {
   private pc: RTCPeerConnection;
   private dataChannel: RTCDataChannel | null = null;
+  private audioTrack: MediaStreamTrack | null = null;
   private videoTrack: MediaStreamTrack | null = null;
   private videoSender: RTCRtpSender | null = null;
 
   public onIceCandidate: ((candidate: RTCIceCandidateInit) => void) | null = null;
   public onConnectionStateChange: ((state: RTCPeerConnectionState) => void) | null = null;
   public onDataChannelMessage: ((msg: DataChannelMessage) => void) | null = null;
+  public onTrack: ((stream: MediaStream) => void) | null = null;
 
   constructor() {
     this.pc = new RTCPeerConnection(WEBRTC_CONFIG);
@@ -27,12 +29,26 @@ export class WebRtcPeer {
     this.pc.onconnectionstatechange = () => {
       this.onConnectionStateChange?.(this.pc.connectionState);
     };
+
+    this.pc.ontrack = (event) => {
+      const stream = event.streams[0];
+      if (stream) {
+        this.onTrack?.(stream);
+      }
+    };
   }
 
   addAudioTrack(stream: MediaStream): void {
     const track = stream.getAudioTracks()[0];
     if (track) {
+      this.audioTrack = track;
       this.pc.addTrack(track, stream);
+    }
+  }
+
+  setMicEnabled(enabled: boolean): void {
+    if (this.audioTrack) {
+      this.audioTrack.enabled = enabled;
     }
   }
 

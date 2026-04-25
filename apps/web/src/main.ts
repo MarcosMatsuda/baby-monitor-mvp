@@ -106,6 +106,28 @@ class BabyStationApp {
     }
   }
 
+  private parentAudioEl: HTMLAudioElement | null = null;
+
+  private attachParentAudio(stream: MediaStream): void {
+    if (!this.parentAudioEl) {
+      const el = document.createElement('audio');
+      el.autoplay = true;
+      el.setAttribute('playsinline', '');
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      this.parentAudioEl = el;
+    }
+    this.parentAudioEl.srcObject = stream;
+  }
+
+  private detachParentAudio(): void {
+    if (this.parentAudioEl) {
+      this.parentAudioEl.srcObject = null;
+      this.parentAudioEl.remove();
+      this.parentAudioEl = null;
+    }
+  }
+
   private wireSignaling(): void {
     this.signaling.onPeerJoined(async (data) => {
       if (data.role === 'baby') {
@@ -115,6 +137,15 @@ class BabyStationApp {
           if (msg.type === 'video-toggle') {
             this.webrtc.setVideoEnabled(msg.enabled);
           }
+          if (msg.type === 'talk-state') {
+            // While parent is talking, mute the baby mic to prevent the
+            // parent's voice (playing on the baby speaker) from feeding
+            // back into the stream.
+            this.webrtc.setMicEnabled(!msg.talking);
+          }
+        };
+        this.webrtc.onTrack = (stream) => {
+          this.attachParentAudio(stream);
         };
         const offer = await this.webrtc.createOffer();
         this.signaling.sendSignal(offer);
@@ -180,6 +211,7 @@ class BabyStationApp {
       this.stopDbStream();
       this.audioCapture.stopKeepAlive();
       this.audioCapture.stopAnalyser();
+      this.detachParentAudio();
       this.webrtc.close();
       this.signaling.disconnect();
       this.updateState('disconnected');
