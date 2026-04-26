@@ -52,6 +52,17 @@ export const MEDIA_CONSTRAINTS: MediaStreamConstraints = {
 // Cap to protect baby-phone battery and cellular uplink.
 export const VIDEO_MAX_BITRATE_BPS = 250_000;
 
+// Quality presets the parent can select at runtime via the
+// set-bitrate command. The baby applies the selected cap to the
+// video sender without renegotiating SDP.
+export type BitratePreset = 'low' | 'normal' | 'high';
+
+export const VIDEO_BITRATE_PRESETS: Record<BitratePreset, number> = {
+  low: 100_000,
+  normal: VIDEO_MAX_BITRATE_BPS,
+  high: 500_000,
+};
+
 export const DATA_CHANNEL_LABEL = 'telemetry';
 
 export const ANALYSER_FFT_SIZE = 2048;

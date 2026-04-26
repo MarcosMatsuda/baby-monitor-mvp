@@ -3,7 +3,11 @@ import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { RTCView, type MediaStream } from 'react-native-webrtc';
 import { useKeepAwake } from 'expo-keep-awake';
 import { semantic, spacing, typography, radii } from '@baby-monitor/design-tokens';
-import type { ConnectionState, LullabyTrack } from '@baby-monitor/shared-types';
+import type {
+  BitratePreset,
+  ConnectionState,
+  LullabyTrack,
+} from '@baby-monitor/shared-types';
 import {
   StatusPill,
   DbMeter,
@@ -14,6 +18,12 @@ import {
 import { useElapsedTime } from '../hooks/use-elapsed-time.hook';
 import { useLastActivity } from '../hooks/use-last-activity.hook';
 import { commonStyles } from '../theme';
+
+const BITRATE_LABELS: Record<BitratePreset, string> = {
+  low: 'Baixa',
+  normal: 'Normal',
+  high: 'Alta',
+};
 
 interface MonitorScreenProps {
   readonly connectionState: ConnectionState;
@@ -29,6 +39,8 @@ interface MonitorScreenProps {
   readonly babyBattery: number | null;
   readonly babyCharging: boolean;
   readonly lullabyTrack: LullabyTrack | null;
+  readonly flashlightOn: boolean;
+  readonly bitratePreset: BitratePreset;
   readonly onThresholdChange: (value: number) => void;
   readonly onDismissAlert: () => void;
   readonly onToggleVideo: () => void;
@@ -36,6 +48,8 @@ interface MonitorScreenProps {
   readonly onTalkStop: () => void;
   readonly onLullabyPlay: (track: LullabyTrack) => void;
   readonly onLullabyStop: () => void;
+  readonly onToggleFlashlight: () => void;
+  readonly onBitrateChange: (preset: BitratePreset) => void;
   readonly onDisconnect: () => void;
 }
 
@@ -53,6 +67,8 @@ export function MonitorScreen({
   babyBattery,
   babyCharging,
   lullabyTrack,
+  flashlightOn,
+  bitratePreset,
   onThresholdChange,
   onDismissAlert,
   onToggleVideo,
@@ -60,6 +76,8 @@ export function MonitorScreen({
   onTalkStop,
   onLullabyPlay,
   onLullabyStop,
+  onToggleFlashlight,
+  onBitrateChange,
   onDisconnect,
 }: MonitorScreenProps): React.JSX.Element {
   // Keep the screen awake while monitoring so the JS engine stays
@@ -107,6 +125,51 @@ export function MonitorScreen({
             objectFit="cover"
             mirror={false}
           />
+        </View>
+      )}
+
+      {videoEnabled && (
+        <View style={styles.videoControls}>
+          <Pressable
+            onPress={onToggleFlashlight}
+            style={({ pressed }) => [
+              styles.chip,
+              flashlightOn && styles.chipActive,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text
+              style={[
+                styles.chipText,
+                flashlightOn && styles.chipTextActive,
+              ]}
+            >
+              {flashlightOn ? 'Lanterna ligada' : 'Lanterna'}
+            </Text>
+          </Pressable>
+
+          <View style={styles.bitrateGroup}>
+            {(['low', 'normal', 'high'] as const).map((preset) => (
+              <Pressable
+                key={preset}
+                onPress={() => onBitrateChange(preset)}
+                style={({ pressed }) => [
+                  styles.bitrateChip,
+                  bitratePreset === preset && styles.chipActive,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.chipText,
+                    bitratePreset === preset && styles.chipTextActive,
+                  ]}
+                >
+                  {BITRATE_LABELS[preset]}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
       )}
 
@@ -254,6 +317,42 @@ const styles = StyleSheet.create({
   },
   video: {
     flex: 1,
+  },
+  videoControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing[4],
+    gap: spacing[2],
+  },
+  chip: {
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[4],
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: semantic.text.muted,
+  },
+  bitrateGroup: {
+    flexDirection: 'row',
+    gap: spacing[1],
+  },
+  bitrateChip: {
+    paddingVertical: spacing[2],
+    paddingHorizontal: spacing[3],
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: semantic.text.muted,
+  },
+  chipActive: {
+    backgroundColor: semantic.text.muted,
+  },
+  chipText: {
+    fontSize: typography.size.xs,
+    fontWeight: typography.weight.medium,
+    color: semantic.text.muted,
+  },
+  chipTextActive: {
+    color: semantic.bg.primary,
   },
   meterContainer: {
     flex: 1,

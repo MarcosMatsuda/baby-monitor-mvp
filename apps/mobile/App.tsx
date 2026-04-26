@@ -4,6 +4,7 @@ import { View, StyleSheet, Vibration } from 'react-native';
 import { mediaDevices, type MediaStream } from 'react-native-webrtc';
 import { semantic } from '@baby-monitor/design-tokens';
 import type {
+  BitratePreset,
   ConnectionState,
   DataChannelMessage,
   LullabyTrack,
@@ -62,6 +63,8 @@ export default function App(): React.JSX.Element {
   const [canTalk, setCanTalk] = useState(false);
   const [isTalking, setIsTalking] = useState(false);
   const [lullabyTrack, setLullabyTrack] = useState<LullabyTrack | null>(null);
+  const [flashlightOn, setFlashlightOn] = useState(false);
+  const [bitratePreset, setBitratePreset] = useState<BitratePreset>('normal');
   const connection = useConnection();
   const monitor = useMonitor();
 
@@ -171,6 +174,8 @@ export default function App(): React.JSX.Element {
         setIsTalking(false);
         setCanTalk(false);
         setLullabyTrack(null);
+        setFlashlightOn(false);
+        setBitratePreset('normal');
         stopLocalAudio();
         disableBackgroundAudio().catch(() => {});
         setScreen('role-selection');
@@ -181,6 +186,8 @@ export default function App(): React.JSX.Element {
       stopLocalAudio();
       setCanTalk(false);
       setLullabyTrack(null);
+      setFlashlightOn(false);
+      setBitratePreset('normal');
       disableBackgroundAudio().catch(() => {});
     }
   }, [connection, monitor]);
@@ -199,6 +206,8 @@ export default function App(): React.JSX.Element {
     setIsTalking(false);
     setCanTalk(false);
     setLullabyTrack(null);
+    setFlashlightOn(false);
+    setBitratePreset('normal');
     stopLocalAudio();
     disableBackgroundAudio().catch(() => {});
     setScreen('role-selection');
@@ -248,6 +257,24 @@ export default function App(): React.JSX.Element {
     setLullabyTrack(null);
   }, []);
 
+  const handleToggleFlashlight = useCallback(() => {
+    setFlashlightOn((prev) => {
+      const next = !prev;
+      webrtcPeer?.sendData({
+        type: 'toggle-flashlight',
+        enabled: next,
+        ts: Date.now(),
+      });
+      return next;
+    });
+  }, []);
+
+  const handleBitrateChange = useCallback((preset: BitratePreset) => {
+    if (!webrtcPeer) return;
+    webrtcPeer.sendData({ type: 'set-bitrate', preset, ts: Date.now() });
+    setBitratePreset(preset);
+  }, []);
+
   const handleDisconnect = useCallback(() => {
     webrtcPeer?.close();
     webrtcPeer = null;
@@ -260,6 +287,8 @@ export default function App(): React.JSX.Element {
     setIsTalking(false);
     setCanTalk(false);
     setLullabyTrack(null);
+    setFlashlightOn(false);
+    setBitratePreset('normal');
     stopLocalAudio();
     disableBackgroundAudio().catch(() => {});
     setScreen('role-selection');
@@ -302,6 +331,8 @@ export default function App(): React.JSX.Element {
           babyBattery={monitor.babyBattery}
           babyCharging={monitor.babyCharging}
           lullabyTrack={lullabyTrack}
+          flashlightOn={flashlightOn}
+          bitratePreset={bitratePreset}
           onThresholdChange={monitor.setThreshold}
           onDismissAlert={handleDismissAlert}
           onToggleVideo={handleToggleVideo}
@@ -309,6 +340,8 @@ export default function App(): React.JSX.Element {
           onTalkStop={handleTalkStop}
           onLullabyPlay={handleLullabyPlay}
           onLullabyStop={handleLullabyStop}
+          onToggleFlashlight={handleToggleFlashlight}
+          onBitrateChange={handleBitrateChange}
           onDisconnect={handleDisconnect}
         />
       )}

@@ -15,7 +15,10 @@ import { LullabyPlayerRepository } from './infrastructure/lullaby/lullaby-player
 import { BabyStationUi } from './presentation/components/baby-station.ui';
 import { AudioLevel } from './domain/entities/audio-level.entity';
 import { Connection } from './domain/entities/connection.entity';
-import { SIGNALING_URL } from '@baby-monitor/webrtc-config';
+import {
+  SIGNALING_URL,
+  VIDEO_BITRATE_PRESETS,
+} from '@baby-monitor/webrtc-config';
 import {
   DB_SEND_INTERVAL_MS,
   STATUS_SEND_INTERVAL_MS,
@@ -164,6 +167,13 @@ class BabyStationApp {
           }
           if (msg.type === 'stop-lullaby') {
             this.lullaby.stop();
+          }
+          if (msg.type === 'toggle-flashlight') {
+            this.webrtc.setTorchEnabled(msg.enabled).catch(() => {});
+          }
+          if (msg.type === 'set-bitrate') {
+            const bps = VIDEO_BITRATE_PRESETS[msg.preset];
+            this.webrtc.setVideoBitrate(bps).catch(() => {});
           }
         };
         this.webrtc.onTrack = (stream) => {

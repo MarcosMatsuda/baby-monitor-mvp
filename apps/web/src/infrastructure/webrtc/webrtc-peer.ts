@@ -68,6 +68,32 @@ export class WebRtcPeer {
     }
   }
 
+  async setTorchEnabled(enabled: boolean): Promise<void> {
+    if (!this.videoTrack) return;
+    try {
+      await this.videoTrack.applyConstraints({
+        advanced: [{ torch: enabled } as MediaTrackConstraintSet],
+      });
+    } catch {
+      // Torch isn't supported on this camera/browser (Safari/iOS, most
+      // front cameras). Ignore — the parent already accepts that the
+      // command may be a no-op on some devices.
+    }
+  }
+
+  async setVideoBitrate(maxBitrateBps: number): Promise<void> {
+    if (!this.videoSender) return;
+    try {
+      const params = this.videoSender.getParameters();
+      params.encodings = params.encodings?.length
+        ? params.encodings.map((e) => ({ ...e, maxBitrate: maxBitrateBps }))
+        : [{ maxBitrate: maxBitrateBps }];
+      await this.videoSender.setParameters(params);
+    } catch {
+      // Sender not yet negotiated or browser rejected the change.
+    }
+  }
+
   createDataChannel(): RTCDataChannel {
     this.dataChannel = this.pc.createDataChannel(DATA_CHANNEL_LABEL);
     this.wireDataChannelMessages(this.dataChannel);
@@ -85,18 +111,8 @@ export class WebRtcPeer {
     };
   }
 
-  private async applyVideoBitrateCap(): Promise<void> {
-    if (!this.videoSender) return;
-    try {
-      const params = this.videoSender.getParameters();
-      params.encodings = params.encodings?.length
-        ? params.encodings.map((e) => ({ ...e, maxBitrate: VIDEO_MAX_BITRATE_BPS }))
-        : [{ maxBitrate: VIDEO_MAX_BITRATE_BPS }];
-      await this.videoSender.setParameters(params);
-    } catch {
-      // Some browsers reject setParameters before the sender is negotiated;
-      // the cap will be re-applied on next negotiation.
-    }
+  private applyVideoBitrateCap(): Promise<void> {
+    return this.setVideoBitrate(VIDEO_MAX_BITRATE_BPS);
   }
 
   async createOffer(): Promise<SignalDto> {

@@ -71,9 +71,12 @@ export type DataChannelMessage =
   | VideoToggleMessage
   | TalkStateMessage
   | PlayLullabyMessage
-  | StopLullabyMessage;
+  | StopLullabyMessage
+  | ToggleFlashlightMessage
+  | SetBitrateMessage;
 
 export type LullabyTrack = 'white-noise' | 'heartbeat';
+export type BitratePreset = 'low' | 'normal' | 'high';
 
 export interface DbLevelMessage {
   readonly type: 'db';
@@ -120,6 +123,24 @@ export interface PlayLullabyMessage {
 // Parent → baby: stop any currently playing lullaby track.
 export interface StopLullabyMessage {
   readonly type: 'stop-lullaby';
+  readonly ts: number;
+}
+
+// Parent → baby: turn the baby phone's torch (camera flash LED) on
+// or off. Only meaningful while the camera track is live; baby
+// silently ignores the command otherwise. Useful as a fill light at
+// night since phones don't have IR.
+export interface ToggleFlashlightMessage {
+  readonly type: 'toggle-flashlight';
+  readonly enabled: boolean;
+  readonly ts: number;
+}
+
+// Parent → baby: switch the video sender's bitrate cap to a preset.
+// The baby applies it via setParameters without renegotiating SDP.
+export interface SetBitrateMessage {
+  readonly type: 'set-bitrate';
+  readonly preset: BitratePreset;
   readonly ts: number;
 }
 
