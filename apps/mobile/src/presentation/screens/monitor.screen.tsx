@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { RTCView, type MediaStream } from 'react-native-webrtc';
+import { useKeepAwake } from 'expo-keep-awake';
 import { semantic, spacing, typography, radii } from '@baby-monitor/design-tokens';
 import type { ConnectionState } from '@baby-monitor/shared-types';
 import { StatusPill, DbMeter, ThresholdSlider, AlertOverlay } from '../components';
@@ -45,6 +46,11 @@ export function MonitorScreen({
   onTalkStop,
   onDisconnect,
 }: MonitorScreenProps): React.JSX.Element {
+  // Keep the screen awake while monitoring so the JS engine stays
+  // responsive (alerts + vibration) and the user can glance at the dB
+  // meter without unlocking the phone.
+  useKeepAwake();
+
   const elapsed = useElapsedTime(connectedAt);
   const lastActivity = useLastActivity(lastNoiseAt);
 

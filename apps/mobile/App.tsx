@@ -15,6 +15,10 @@ import { useMonitor } from './src/presentation/stores/monitor.store';
 
 import { SignalingRepository } from './src/infrastructure/signaling/signaling.repository';
 import { WebRtcPeerMobile } from './src/infrastructure/webrtc/webrtc-peer-mobile';
+import {
+  enableBackgroundAudio,
+  disableBackgroundAudio,
+} from './src/infrastructure/audio/audio-session.service';
 import { AlertEngine } from './src/domain/entities/alert-engine.entity';
 import { ProcessDbReadingUseCase } from './src/domain/use-cases/process-db-reading.use-case';
 
@@ -61,6 +65,9 @@ export default function App(): React.JSX.Element {
   const handleSelectParent = useCallback(async () => {
     try {
       connection.setState('waiting');
+      // Activate background-friendly audio session before any track is
+      // attached, so iOS keeps playback alive when the screen locks.
+      await enableBackgroundAudio().catch(() => {});
       // Request mic permission in parallel with signaling setup so it's ready
       // before the baby station sends its offer.
       const micPromise = requestMicrophone();
@@ -155,6 +162,7 @@ export default function App(): React.JSX.Element {
         setIsTalking(false);
         setCanTalk(false);
         stopLocalAudio();
+        disableBackgroundAudio().catch(() => {});
         setScreen('role-selection');
       });
 
@@ -162,6 +170,7 @@ export default function App(): React.JSX.Element {
       connection.setState('disconnected');
       stopLocalAudio();
       setCanTalk(false);
+      disableBackgroundAudio().catch(() => {});
     }
   }, [connection, monitor]);
 
@@ -179,6 +188,7 @@ export default function App(): React.JSX.Element {
     setIsTalking(false);
     setCanTalk(false);
     stopLocalAudio();
+    disableBackgroundAudio().catch(() => {});
     setScreen('role-selection');
   }, [connection, monitor]);
 
@@ -226,6 +236,7 @@ export default function App(): React.JSX.Element {
     setIsTalking(false);
     setCanTalk(false);
     stopLocalAudio();
+    disableBackgroundAudio().catch(() => {});
     setScreen('role-selection');
   }, [connection, monitor]);
 

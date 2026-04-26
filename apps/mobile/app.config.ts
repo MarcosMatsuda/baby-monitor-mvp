@@ -30,6 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'RECORD_AUDIO',
       'MODIFY_AUDIO_SETTINGS',
       'FOREGROUND_SERVICE',
+      'FOREGROUND_SERVICE_MICROPHONE',
       'WAKE_LOCK',
       'VIBRATE',
       'INTERNET',
