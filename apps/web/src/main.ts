@@ -10,6 +10,7 @@ import {
   BatteryMonitorRepository,
   type BatterySnapshot,
 } from './infrastructure/battery/battery-monitor.repository';
+import { WakeLockRepository } from './infrastructure/screen/wake-lock.repository';
 import { BabyStationUi } from './presentation/components/baby-station.ui';
 import { AudioLevel } from './domain/entities/audio-level.entity';
 import { Connection } from './domain/entities/connection.entity';
@@ -31,6 +32,7 @@ class BabyStationApp {
   private readonly ui = new BabyStationUi();
   private readonly connection = new Connection();
   private readonly battery = new BatteryMonitorRepository();
+  private readonly wakeLock = new WakeLockRepository();
 
   private dbInterval: ReturnType<typeof setInterval> | null = null;
   private statusInterval: ReturnType<typeof setInterval> | null = null;
@@ -163,6 +165,7 @@ class BabyStationApp {
         this.signaling.sendSignal(offer);
         this.startDbStream();
         this.startStatusStream();
+        this.wakeLock.acquire().catch(() => {});
       }
     });
 
@@ -179,6 +182,7 @@ class BabyStationApp {
       this.updateState('disconnected');
       this.stopDbStream();
       this.stopStatusStream();
+      this.wakeLock.release().catch(() => {});
     });
 
     this.signaling.onRoomError((data) => {
@@ -260,6 +264,7 @@ class BabyStationApp {
       this.audioCapture.stopKeepAlive();
       this.audioCapture.stopAnalyser();
       this.detachParentAudio();
+      this.wakeLock.release().catch(() => {});
       this.webrtc.close();
       this.signaling.disconnect();
       this.updateState('disconnected');
